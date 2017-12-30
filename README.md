@@ -33,7 +33,7 @@ Sets the module with CRC off.
 #### setChannel();              
 Sets the indicated frequency channel in the module.
 #### setFrequency();              
-Sets the indicated frequency in the module. New funcktion  added 2017-12-30 by Agge 
+Sets the indicated frequency in the module. New function  added 2017-12-30 by Agge 
 #### setPower();                
 Sets the signal power indicated in the module.
 #### setPowerNum();            
