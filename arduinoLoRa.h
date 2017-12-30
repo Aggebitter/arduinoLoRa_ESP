@@ -51,7 +51,11 @@
 
 #define SX1272_debug_mode 2
 
+// The crystal oscillator frequency of the module
+#define RH_FXOSC 32000000.0
 
+// The Frequency Synthesizer step = RH_RF95_FXOSC / 2^^19
+#define RH_FSTEP  (RH_FXOSC / 524288)
 
 
 //! MACROS //
@@ -513,6 +517,7 @@ public:
 	It stores in global '_channel' variable the frequency channel
 	\return '0' on success, '1' otherwise
 	 */
+
 	uint8_t getChannel();
 
 	//! It sets frequency channel the module is using.
@@ -522,6 +527,21 @@ public:
 	\return '0' on success, '1' otherwise
 	 */
 	int8_t setChannel(uint32_t ch);
+
+	//! It gets the output power of the signal.
+  	/*!
+	It stores in global '_power' variable the output power of the signal
+	\return '0' on success, '1' otherwise
+	 */
+ //   uint32_t getFrequency();
+
+	//! It sets frequency channel the module is using.
+  	/*!
+	It stores in global '_channel' variable the frequency channel
+	\param uint32_t ch : frequency channel value to set in the configuration.
+	\return '0' on success, '1' otherwise
+	 */
+	int8_t setFrequency(uint32_t fq);
 
 	//! It gets the output power of the signal.
   	/*!
@@ -1085,6 +1105,12 @@ public:
   	/*!
    	*/
 	uint32_t _channel;
+
+	//! Variable : frequency.
+	//!
+  	/*!
+   	*/
+    uint32_t _frequency;
 
 	//! Variable : output power.
 	//!

@@ -131,7 +131,7 @@ uint8_t SX1272::ON()
 	writeRegister(REG_OP_MODE,0x88); /// B10001000
 
 	/// RegFrf; MSB,MID and LSB of RF carrier frequency
-    ///     Resolution is 61.035 Hz if F(XOSC) = 32 MHz. Default value is a uint32_t
+    ///     Resolution is 61.035 Hz if F(XOSC) = 32 MHz. value is a uint32_t
     ///     uint32_t for frequency  = (center Hz ) / 32 MHz  / 2^^19.
     ///     We are using (2^^19 = 524288). Formula then gives 0x6c8000 = 434 MHz
     ///
@@ -1988,6 +1988,90 @@ int8_t SX1272::setChannel(uint32_t ch)
   delay(100);
   return state;
 }
+
+/*
+ Function: Sets the indicated frequency in the module.
+ Returns: Integer that determines if there has been any error
+   state = 2  --> The command has not been executed
+   state = 1  --> There has been an error while executing the command
+   state = 0  --> The command has been executed with no errors
+   state = -1 --> Forbidden command for this protocol
+ Parameters:
+   fq: frequency value to set in configuration.
+*/
+int8_t SX1272::setFrequency(uint32_t fq)
+{
+  byte st0;
+  int8_t state = 2;
+  unsigned int freq3;
+  unsigned int freq2;
+  uint8_t freq1;
+  uint32_t freq;
+
+  #if (SX1272_debug_mode > 1)
+	  Serial.println();
+	  Serial.println(F("## Starting 'setFrequency' ##"));
+  #endif
+
+  st0 = readRegister(REG_OP_MODE);	// Save the previous status
+  if( _modem == LORA )
+  {
+	  // LoRa Stdby mode in order to write in registers
+	  writeRegister(REG_OP_MODE, LORA_STANDBY_MODE);
+  }
+  else
+  {
+	  // FSK Stdby mode in order to write in registers
+	  writeRegister(REG_OP_MODE, FSK_STANDBY_MODE);
+  }
+// The crystal oscillator frequency of the module
+// RH_FXOSC 32000000.0
+
+// The Frequency Synthesizer step = RH_FXOSC / 2^^19
+// RH_FSTEP  (RH_FXOSC / 524288)
+  uint32_t fq_to_set = ( fq ) / RH_FSTEP;
+
+  freq3 = ((fq_to_set >> 16) & 0x0FF);		// frequency channel MSB
+  freq2 = ((fq_to_set >> 8) & 0x0FF);		// frequency channel MIB
+  freq1 = (fq_to_set & 0xFF);				// frequency channel LSB
+
+  writeRegister(REG_FRF_MSB, freq3);
+  writeRegister(REG_FRF_MID, freq2);
+  writeRegister(REG_FRF_LSB, freq1);
+
+  // delay(100);  /// Why Delay ? AGGE
+
+  // storing MSB in freq channel value
+  freq3 = (readRegister(REG_FRF_MSB));
+  freq = (freq3 << 8) & 0xFFFFFF;
+
+  // storing MID in freq channel value
+  freq2 = (readRegister(REG_FRF_MID));
+  freq = (freq << 8) + ((freq2 << 8) & 0xFFFFFF);
+
+  // storing LSB in freq channel value
+  freq = freq + ((readRegister(REG_FRF_LSB)) & 0xFFFFFF);
+
+  if( freq == fq_to_set )
+  {
+    state = 0;
+    _frequency = freq;
+    #if (SX1272_debug_mode > 1)
+		Serial.print(F("## Frequency "));
+		Serial.print(fq_to_set, HEX);
+		Serial.println(F(" has been successfully set ##"));
+		Serial.println();
+	#endif
+  }
+  else
+  {
+    state = 1;
+  }
+  writeRegister(REG_OP_MODE, st0);	// Getting back to previous status
+  delay(100);
+  return state;
+}
+
 
 /*
  Function: Gets the signal power within the module is configured.
