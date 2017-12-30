@@ -102,3 +102,5 @@ http://www.libelium.com
 | `returns` | uint8_t |
 |**receiveAll();**  |Receives all the information on air with maximum timeout |
 | `returns` | uint8_t |
+|**getExtIRQ()**  |Gets the interrupt register and clear it |
+| `returns` | uint16_t |
