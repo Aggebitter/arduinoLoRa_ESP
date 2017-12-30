@@ -58,6 +58,10 @@ http://www.libelium.com
 | `returns` | uint8_t |
 |**setMaxCurrent();**  |Limits the current supply of the internal power amplifier |
 | `returns` | uint8_t |
+|**setDio0Map(uint8_t);**  |Sets DIO0 Mapping use number 0-3 |
+| `returns` | nothing |
+|**setDio2Map(uint8_t);**  |Sets DIO0 Mapping use number 0-3 |
+| `returns` | nothing |
 |**getTemp();**  |Gets the temperature from the measurement block module |
 | `returns` | uint8_t |
 |**getRegs();**  |Gets the content of different registers |
