@@ -24,7 +24,7 @@ http://www.libelium.com
 
 | Function | Description |
 | --- | --- |
-|**setLORA()**  |Sets the module in LoRa mode |
+|**setLORA();**  |Sets the module in LoRa mode |
 | `returns` | It stores in global _LORA variable 1 returns uint8_t |
 |**setMode();**  |Sets the BW, CR and SF of the LoRa modulation |
 | `returns` | uint8_t |
@@ -58,45 +58,47 @@ http://www.libelium.com
 | `returns` | uint8_t |
 |**setMaxCurrent();**  |Limits the current supply of the internal power amplifier |
 | `returns` | uint8_t |
-
-#### getTemp();                 
-Gets the temperature from the measurement block module.
-#### getRegs();               
-Gets the content of different registers.
+|**getTemp();**  |Gets the temperature from the measurement block module |
+| `returns` | uint8_t |
+|**getRegs();**  |Gets the content of different registers |
+| `returns` | uint8_t |
 
 
 ## Link information functions:
 
-#### getSNR();                
-Gets the SNR value in LoRa mode.
-#### getRSSI();                
-Gets the current value of RSSI from the channel.
-#### getRSSIpacket();          
-Gets the RSSI of the last packet received in LoRa mode.
+| Function | Description |
+| --- | --- |
+|**getSNR();**  |Gets the SNR value in LoRa mod |
+| `returns` | uint8_t |
+|**getRSSI()**  |Gets the current value of RSSI from the channel |
+| `returns` | uint8_t |
+|**getRSSIpacket();**  |Gets the RSSI of the last packet received in LoRa mode |
+| `returns` | uint8_t |
 
 
 ## Sending and receiving functions:
 
-#### sendPacketTimeout();     
-Sends a packet to the specified destination before a timeout expires.
-#### sendPacketMaxTimeout();
-Same as previous function with maximum timeout.
-#### sendPacketTimeoutACK();
-Sends a packet to a destination before a timeout and wait for an ACK response.
-#### sendPacketMaxTimeoutACK();
-ame as previous function with maximum timeout.
-#### sendPacketTimeoutACKRetries();    
-Sends a packet to a destination before a timeout, 
-wait for an ACK response and retry to send the packet if ACK is lost.
-#### sendPacketMaxTimeoutACKRetries();
-Same as previous function with maximum timeout.
-#### receivePacketTimeout();
-Receives information before a timeout expires.     
-#### receivePacketMAXTimeout();
-Same as previous function with maximum timeout.
-#### receivePacketTimeoutACK();
-Receives information before a timeout expires and responds with ACK.
-#### receivePacketMAXTimeoutACK();
-Same as previous function with maximum timeout.
-#### receiveAll();
-Receives all the information on air with maximum timeout.
+| Function | Description |
+| --- | --- |
+|**sendPacketTimeout();**  |Sends a packet to the specified destination before a timeout expires |
+| `returns` | uint8_t |
+|**sendPacketMaxTimeout()**  |Same as previous function with maximum timeout |
+| `returns` | uint8_t |
+|**sendPacketTimeoutACK();**  |Sends a packet to a destination before a timeout and wait for an ACK response |
+| `returns` | uint8_t |
+|**sendPacketMaxTimeoutACK();**  |Same as previous function with maximum timeout |
+| `returns` | uint8_t |
+|**sendPacketTimeoutACKRetries();**  |Sends a packet to a destination before a timeout, wait for an ACK response and retry to send the packet if ACK is lost |
+| `returns` | uint8_t |
+|**sendPacketMaxTimeoutACKRetries();**  |Same as previous function with maximum timeout |
+| `returns` | uint8_t |
+|**receivePacketTimeout();**  |Receives information before a timeout expires |
+| `returns` | uint8_t |
+|**receivePacketMAXTimeout();**  |Same as previous function with maximum timeout |
+| `returns` | uint8_t |
+|**receivePacketTimeoutACK();**  |Receives information before a timeout expires and responds with ACK |
+| `returns` | uint8_t |
+|**receivePacketMAXTimeoutACK();**  |Same as previous function with maximum timeout |
+| `returns` | uint8_t |
+|**receiveAll();**  |Receives all the information on air with maximum timeout |
+| `returns` | uint8_t |
