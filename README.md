@@ -2,52 +2,63 @@
 Fork and update on Libelium arduinoLoRa driver, Modified for ESP family 32/8266 and arduino IDE 1.8.5
 http://www.libelium.com 
 
+
+
 ## Initialization and basic functions:
 
-#### ON();                     
-Opens the SPI and switches the SX1272 LoRa module ON.
-#### OFF();                   
-Closes the SPI and switches the SX1272 LoRa module OFF.
-#### readRegister();           
-Reads the indicated internal register.
-#### writeRegister();           
-Writes the indicated internal register.
-#### clearFlags();             
-Clears the interruption flags.
+| Function | Description |
+| --- | --- |
+|**ON();**  |resets and sets the SX127x basic LoRa mode |
+| `returns` | uint8_t |
+|**OFF();**  |just reset SX127x LoRa module |
+| `returns` | uint8_t |
+|**readRegister();**  |Reads the indicated internal register |
+| `returns` | uint8_t |
+|**writeRegister()**  |Writes the indicated internal register |
+| `returns` | uint8_t |
+|**clearFlags();**  |Clears the interruption flags |
+| `returns` | uint8_t |
 
 
 ## Configuration functions:
 
-#### setLORA();                 
-Sets the module in LoRa transmission mode.
-#### setMode();                 
-Sets the BW, CR and SF of the LoRa modulation.
-#### setHeaderON();             
-Sets the module in explicit header mode (header is sent).
-#### setHeaderOFF();            
-Sets the module in implicit header mode (header is not sent).
-#### setCRC_ON();               
-Sets the module with CRC on.
-#### setCRC_OFF();              
-Sets the module with CRC off.
-#### setChannel();              
-Sets the indicated frequency channel in the module.
-#### setFrequency();              
-Sets the indicated frequency in the module.         ***added 2017-12-30 by Agge***
-#### setPower();                
-Sets the signal power indicated in the module.
-#### setPowerNum();            
-Sets the signal power indicated in the module.
-#### setPreambleLength();       
-Sets the preamble length in the module.
-#### setPacketLength();         
-Sets the packet length in the module.
-#### setNodeAddress();          
-Sets the node address in the module.
-#### setRetries();              
-Sets the maximum number of retries.
-#### setMaxCurrent();           
-Limits the current supply of the internal power amplifier.
+| Function | Description |
+| --- | --- |
+|**setLORA()**  |Sets the module in LoRa mode |
+| `returns` | It stores in global _LORA variable 1 returns uint8_t |
+|**setMode();**  |Sets the BW, CR and SF of the LoRa modulation |
+| `returns` | uint8_t |
+|**setHeaderON();**  |Sets the module in explicit header mode (header is sent) |
+| `returns` | uint8_t |
+|**setHeaderOFF();**  |Sets the module in implicit header mode (header is not sent) |
+| `returns` | uint8_t |
+|**setCRC_ON();**  |Sets the module with CRC on |
+| `returns` | uint8_t |
+|**setChannel();**  |Sets the indicated frequency channel in the module |
+| `returns` | uint8_t |
+|**setFrequency();**  |Sets the indicated frequency in the module ***added 2017-12-30 by Agge*** |
+| `returns` | uint8_t |
+|**serCR();**  |Sets the indicated Coding Rate in the module |
+| `returns` | uint8_t |
+|**setSF();**  |Sets the indicated Spreading Factor in the module |
+| `returns` | uint8_t |
+|**setBW();**  |Sets the indicated BamdWidth in the module |
+| `returns` | uint8_t |
+|**setPower()**  |Sets the signal power indicated in the module |
+| `returns` | uint8_t |
+|**setPowerNum();**  |Sets the signal power indicated in the module |
+| `returns` | uint8_t |
+|**setPreambleLength();**  |Sets the preamble length in the module |
+| `returns` | uint8_t |
+|**setPacketLength();**  |Sets the packet length in the module |
+| `returns` | uint8_t |
+|**setNodeAddress();**  |Sets the node address in the module |
+| `returns` | uint8_t |
+|**setRetries();**  |Sets the maximum number of retries |
+| `returns` | uint8_t |
+|**setMaxCurrent();**  |Limits the current supply of the internal power amplifier |
+| `returns` | uint8_t |
+
 #### getTemp();                 
 Gets the temperature from the measurement block module.
 #### getRegs();               
