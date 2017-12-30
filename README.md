@@ -10,7 +10,7 @@ http://www.libelium.com
 | --- | --- |
 |**ON();**  |resets and sets the SX127x basic LoRa mode |
 | `returns` | uint8_t |
-|**OFF();**  |just reset SX127x LoRa module |
+|**OFF();**  |just reset SX127x LoRa module (for compability) |
 | `returns` | uint8_t |
 |**readRegister();**  |Reads the indicated internal register |
 | `returns` | uint8_t |
