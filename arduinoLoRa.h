@@ -355,6 +355,13 @@ public:
 	 */
 	void clearFlags();
 
+    //! It it returns and clears the interruption flags.
+  	/*!
+	\param void
+	\return void
+	 */
+    uint16_t getExtIRQ();
+
 	//! It sets the LoRa mode on.
   	/*!
   	It stores in global '_LORA' variable '1' when success

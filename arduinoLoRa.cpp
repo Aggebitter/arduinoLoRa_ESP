@@ -41,6 +41,7 @@ SX1272::SX1272()
 		_codingRate = CR_5;
 		_spreadingFactor = SF_7;
 		_channel = CH_12_900;
+		_frequency = 434000000;
 		_header = HEADER_ON;
 		_CRC = CRC_OFF;
 		_modem = FSK;
@@ -88,9 +89,8 @@ uint8_t SX1272::ON()
   digitalWrite(LORA_SS_PIN, HIGH);
   digitalWrite(LORA_RESET_PIN, HIGH);
 
-  delay(11); /// >100ms according to 7.2.1. Manual Reset
-// 4.- IRQ chip select ToDo
-// pinMode(LORA_DI0_PIN,INPUT) ;
+  delay(101); /// >100ms according to 7.2.1. Manual Reset
+
     #if (SX1272_debug_mode > 1)
 	  Serial.println(F("## Reset defined ARDUINO_Heltec_WIFI_LoRa_32 ##"));
 	  Serial.println();
@@ -380,6 +380,61 @@ void SX1272::clearFlags()
 	}
 }
 
+/*
+ Function: Gets the interrupt register and clear it, Use when external IRQ is trigged
+ Returns: uint16_t
+
+*/
+uint16_t SX1272::getExtIRQ() // Added by Agge
+{
+    uint16_t extIrq1;
+    byte extIrq2;
+	if( _modem == LORA )
+	{ // LoRa mode
+		/*  RegIrqFlags
+         *  bit 0 CadDetected
+         *      1 FhssChangeChannel
+         *      2 CadDone
+         *      3 TxDone
+         *      4 ValidHeader
+         *      5 PayloadCrcError
+         *      6 RxDone rc
+         *      7 RxTimeout
+        */
+		extIrq1 = readRegister(REG_IRQ_FLAGS);	// Read registers Irq flags
+		writeRegister(REG_IRQ_FLAGS, 0xFF);	    // Reset Irq's
+
+		#if (SX1272_debug_mode > 1)
+			Serial.println(F("## LoRa IRQ register is : ##"));
+			Serial.println(extIrq1,BIN);
+		#endif
+		return extIrq1;
+	}
+	else
+	{ // FSK mode
+        /*  RegIrqFlags1                RegIrqFlags2
+         *  bit 0 SyncAddressMatch      bit (8)  0 LowBat
+         *      1 PreambleDetect            (9)  1 CrcOk
+         *      2 Timeout                   (10) 2 PayloadReady
+         *      3 Rssi                      (11) 3 PacketSent
+         *      4 PllLock                   (12) 4 FifoOverrun
+         *      5 TxReady                   (13) 5 FifoLevel
+         *      6 RxReady                   (14) 6 FifoEmpty
+         *      7 ModeReady                 (15) 7 FifoFull
+        */
+		extIrq1 = readRegister(REG_IRQ_FLAGS1);	// Read first FSK registers Irq flags
+        extIrq2 = readRegister(REG_IRQ_FLAGS2);	// Read second FSK registers Irq flags
+		writeRegister(REG_IRQ_FLAGS1, 0xFF); // FSK mode flags1 register
+		writeRegister(REG_IRQ_FLAGS2, 0xFF); // FSK mode flags2 register
+
+		extIrq2= ((uint16_t)extIrq2 << 8) | extIrq1; // cast first byte to uint16_t and move it 8 steps up then pipe last byte
+		#if (SX1272_debug_mode > 1)
+			Serial.println(F("## FSK flags cleared ##"));
+			Serial.println(extIrq2,BIN);
+		#endif
+		return extIrq2;
+	}
+}
 /*
  Function: Sets the module in LoRa mode.
  Returns:  Integer that determines if there has been any error
