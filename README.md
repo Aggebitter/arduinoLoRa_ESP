@@ -60,7 +60,7 @@ http://www.libelium.com
 | `returns` | uint8_t |
 |**setDio0Map(uint8_t);**  |Sets DIO0 Mapping use number 0-3 ***added 2017-12-30 by Agge***|
 | `returns` | nothing |
-|**setDio2Map(uint8_t);**  |Sets DIO0 Mapping use number 0-3 ***added 2017-12-30 by Agge*** |
+|**setDio2Map(uint8_t);**  |Sets DIO2 Mapping use number 0-3 ***added 2017-12-30 by Agge*** |
 | `returns` | nothing |
 |**getTemp();**  |Gets the temperature from the measurement block module |
 | `returns` | uint8_t |
