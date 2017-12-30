@@ -36,7 +36,7 @@ http://www.libelium.com
 | `returns` | uint8_t |
 |**setChannel();**  |Sets the indicated frequency channel in the module |
 | `returns` | uint8_t |
-|**setFrequency();**  |Sets the indicated frequency in the module ***added 2017-12-30 by Agge*** |
+|**setFrequency(uint32_t);**  |Sets the indicated frequency in the module ***added 2017-12-30 by Agge*** |
 | `returns` | uint8_t |
 |**serCR();**  |Sets the indicated Coding Rate in the module |
 | `returns` | uint8_t |
