@@ -58,10 +58,12 @@ http://www.libelium.com
 | `returns` | uint8_t |
 |**setMaxCurrent();**  |Limits the current supply of the internal power amplifier |
 | `returns` | uint8_t |
+|**setDetectOptimize(bool ena);**  |Sets Detection Optimize for SF6 ***added 2018-01-03 by Agge***|
+| `returns` | void |
 |**setDio0Map(uint8_t);**  |Sets DIO0 Mapping use number 0-3 ***added 2017-12-30 by Agge***|
-| `returns` | nothing |
+| `returns` | void |
 |**setDio2Map(uint8_t);**  |Sets DIO2 Mapping use number 0-3 ***added 2017-12-30 by Agge*** |
-| `returns` | nothing |
+| `returns` | void |
 |**getTemp();**  |Gets the temperature from the measurement block module |
 | `returns` | uint8_t |
 |**getRegs();**  |Gets the content of different registers |
