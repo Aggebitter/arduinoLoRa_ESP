@@ -2473,13 +2473,13 @@ int8_t SX1272::setPower(char p)
     // H = high
     // M = max
 
-    case 'M':  _power = 0x7F; //! 0x70 + 0x0F, B01110000 + B00001111
+    case 'H':  _power = 0x7F; //! 0x70 + 0x0F, B01110000 + B00001111
                break;
 
     case 'L':  _power = 0x70; //! 0x70 + 0x00, B01110000 + B00000000
                break;
 
-    case 'H':  _power = 0x77; //! 0x70 + 0x07, B01110000 + B00000111
+    case 'M':  _power = 0x77; //! 0x70 + 0x07, B01110000 + B00000111
                break;
 
     default:   state = -1;
