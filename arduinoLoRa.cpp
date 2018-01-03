@@ -1714,41 +1714,42 @@ int8_t	SX1272::setLoRaBW(uint8_t mode) //! To Do Agge
   config1 = (readRegister(REG_MODEM_CONFIG1));	// Save config1 to modify only the BW
   switch(mode)
   {
-      case 0:  config1 = config1 & B00001111;	// clears bits 7 - 4 from REG_MODEM_CONFIG1
-					break;
+      case 0:  config1 = config1 & B00001111;	    // clears bits 7 - 4 from REG_MODEM_CONFIG1
+					break;                          // 7.8kHz
 
-      case 1:  config1 = config1 & B00001111;	// clears bits 7 - 4 from REG_MODEM_CONFIG1
+      case 1:  config1 = config1 & B00001111;	    // clears bits 7 - 4 from REG_MODEM_CONFIG1
 					config1 = config1 | B00010000;	// sets bit 4 from REG_MODEM_CONFIG1
-					break;
+					break;                          // 10.4kHz
 
-      case 2:  config1 = config1 & B00001111;	// clears bits 7 - 4 from REG_MODEM_CONFIG1
+      case 2:  config1 = config1 & B00001111;	    // clears bits 7 - 4 from REG_MODEM_CONFIG1
 					config1 = config1 | B00100000;	// sets bit 5 from REG_MODEM_CONFIG1
-					break;
+					break;                          // 15.6kHz
 
-      case 3:  config1 = config1 & B00001111;	// clears bits 7 - 4 from REG_MODEM_CONFIG1
+      case 3:  config1 = config1 & B00001111;	    // clears bits 7 - 4 from REG_MODEM_CONFIG1
  					config1 = config1 | B00110000;	// sets bit 4,5 from REG_MODEM_CONFIG1
-					break;
+					break;                          // 20.8kHz
 
-      case 4:  config1 = config1 & B00001111;	// clears bits 7 - 4 from REG_MODEM_CONFIG1
+      case 4:  config1 = config1 & B00001111;	    // clears bits 7 - 4 from REG_MODEM_CONFIG1
  					config1 = config1 | B01000000;	// sets bit 6  from REG_MODEM_CONFIG1
-					break;
+					break;                          // 31.25kHz
 
-      case 5:  config1 = config1 & B00001111;	// clears bits 7 - 4 from REG_MODEM_CONFIG1
+      case 5:  config1 = config1 & B00001111;	    // clears bits 7 - 4 from REG_MODEM_CONFIG1
 					config1 = config1 | B01010000;	// sets bit 6,4 from REG_MODEM_CONFIG1
-					break;
+					break;                          // 41.7kHz
 
-      case 6:  config1 = config1 & B00001111;	// clears bits 7 - 4 from REG_MODEM_CONFIG1
+      case 6:  config1 = config1 & B00001111;	    // clears bits 7 - 4 from REG_MODEM_CONFIG1
 					config1 = config1 | B01100000;	// sets bit 6,5 from REG_MODEM_CONFIG1
-					break;
+					break;                          // 62.5kHz
 
-	  case 7:  config1 = config1 & B00111111;	// clears bits 7 - 4 from REG_MODEM_CONFIG1
-					getSF();
+	  case 7:  config1 = config1 & B00111111;	    // clears bits 7 - 4 from REG_MODEM_CONFIG1
+                    config1 = config1 | B01110000;	// sets bit 6,5 from REG_MODEM_CONFIG1
+					getSF();                        // 125kHz
 					if( _spreadingFactor == 11 )
 					{ //! LowDataRateOptimize (Mandatory with BW_125 if SF_11) Modem config 3
 					    config2 = (readRegister(REG_MODEM_CONFIG3));	// Save config2 to modify LowDataRateOptimize
 						config2 = config2 & B00000100;              // bit 3 "1" = enable, "0" = disable
 						config2 = config2 | B00000100;              // set bit 3 "1" = enable
-						writeRegister(REG_MODEM_CONFIG3,config2);	// Update config3
+						writeRegister(REG_MODEM_CONFIG3,config2);	// Update config2
 						//! TODO AGGEIn the lower band (169MHz), signal bandwidths 8&9 are not  allowed
 					}
 					if( _spreadingFactor == 12 )
@@ -1760,12 +1761,13 @@ int8_t	SX1272::setLoRaBW(uint8_t mode) //! To Do Agge
 						//! TODO AGGEIn the lower band (169MHz), signal bandwidths 8&9 are not  allowed
 					}
 					break;
-	  case 8:  config1 = config1 & B00001111;	// clears bits 7 - 4 from REG_MODEM_CONFIG1
+	  case 8:  config1 = config1 & B00001111;	    // clears bits 7 - 4 from REG_MODEM_CONFIG1
 					config1 = config1 | B10000000;	// sets bit 7 from REG_MODEM_CONFIG1
-					break;
+					break;                          // 250kHz
+
 	  case 9:  config1 = config1 & B00001111;	// clears bits 7 - 4 from REG_MODEM_CONFIG1
 					config1 = config1 | B10010000;	//sets bit 7,4  from REG_MODEM_CONFIG1
-					break;
+					break;                          // 500kHz
   }
   writeRegister(REG_MODEM_CONFIG1,config1);		// Update config1
 
