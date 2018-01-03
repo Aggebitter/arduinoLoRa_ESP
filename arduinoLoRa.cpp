@@ -238,6 +238,105 @@ uint8_t SX1272::ON()
 }
 
 /*
+ Function: Inits the module.
+ Returns: uint8_t setLORA state
+*/
+uint8_t SX1272::init()
+{
+
+  uint8_t state = 2;
+
+  #if (SX1272_debug_mode > 1)
+	  Serial.println();
+	  Serial.println(F("## Starting 'ON' ##"));
+  #endif
+
+  // Inital Reset Sequence
+#if defined ( ARDUINO_Heltec_WIFI_LoRa_32 )
+
+// New initialization AGGE
+// 1.-SPI chip select
+  pinMode(LORA_SS_PIN, OUTPUT);
+
+  pinMode(LORA_RESET_PIN, OUTPUT);
+
+// 2.- reset pulse for LoRa module initialization AGGE
+  digitalWrite(LORA_SS_PIN, LOW);
+  digitalWrite(LORA_SS_PIN, LOW);
+  digitalWrite(LORA_RESET_PIN, LOW);
+  digitalWrite(LORA_RESET_PIN, LOW);
+
+  delay(1); /// >100us according to 7.2.2. Manual Reset
+
+  digitalWrite(LORA_SS_PIN, HIGH);
+  digitalWrite(LORA_RESET_PIN, HIGH);
+
+  delay(101); /// >100ms according to 7.2.1. Manual Reset
+
+    #if (SX1272_debug_mode > 1)
+	  Serial.println(F("## Reset defined ARDUINO_Heltec_WIFI_LoRa_32 ##"));
+	  Serial.println();
+    #endif
+#else
+
+
+#endif // defined
+  delay(100);
+
+#if defined ( ARDUINO_Heltec_WIFI_LoRa_32 )  // AGGE
+
+  SPI.begin();
+
+#endif
+
+  delay(100);
+  setMaxCurrent(0x1B);
+  #if (SX1272_debug_mode > 1)
+	  Serial.println(F("## Setting ON with maximum current supply ##"));
+	  Serial.println();
+  #endif
+
+  // set LoRa mode
+  // state = setLORA();
+
+	//Set initialization values
+	writeRegister(REG_FIFO ,0x0);           /// RegFifo; Reset FiFo
+
+	/// RegOpMode; LongRangeMode,AccessSharedReg,Reserved,Reserved,LowFrequencyModeOn,MODE = 000 SLEEP
+    ///                                                                                      001 STDBY
+    ///                                                                                      010 Frequency synthesis TX (FSTX)
+    ///                                                                                      011 Transmit (TX)
+    ///                                                                                      100 Frequency synthesis RX (FSRX)
+    ///                                                                                      101 Receive continuous (RXCONTINUOUS)
+    ///                                                                                      110 Receive single (RXSINGLE)
+    ///                                                                                      111 Channel activity detection (CAD)
+	writeRegister(REG_OP_MODE,0x88); /// B10001000
+
+	/// RegFrf; MSB,MID and LSB of RF carrier frequency
+    ///     Resolution is 61.035 Hz if F(XOSC) = 32 MHz. value is a uint32_t
+    ///     uint32_t for frequency  = (center Hz ) / 32 MHz  / 2^^19.
+    ///     We are using (2^^19 = 524288). Formula then gives 0x6c8000 = 434 MHz
+    ///
+    ///     Register values must be modified only when device is in SLEEP or STAND-BY mode.
+	///     MSB = 0x6C MID = 0x80 LSB = 0x00 is default
+    writeRegister(REG_FRF_MSB,0x6C);    /// RegFrfMsb
+	writeRegister(REG_FRF_MID,0x80);    /// RegFrfMid
+	writeRegister(REG_FRF_LSB,0x00);    /// RegFrfLsb
+
+	/// RegPaConfig; PaSelect                   ,MaxPower 3 bits              ,OutputPower 4 bits
+	///              RFO pin +14 dBm.     = 0    Pmax=10.8+0.6*MaxPower [dBm]  if PaSelect = 0
+	///              PA_BOOST pin +20 dBm = 1                                  Pout=Pmax-(15-OutputPower)
+	///                                                                        if PaSelect = 1
+	///                                                                        Pout=17-(15-OutputPower)
+	/// lowest power -4dBm = 0x00,        Max Power +15dBm = 0x70 or 0x0F, Medium Power +6dBm
+	/// 0x0F = B000000000 10.8-(15-0)=-4  0x7F = B01111111 15-(15-0) = 15   0x76 = B01110110 15 -(15-6) = 6
+	writeRegister(REG_PA_CONFIG,0x00); /// B00000000 Start at Lowest power
+
+  return 0;
+}
+
+
+/*
  Function: Sets the module OFF.
  Returns: Nothing
 */
@@ -281,6 +380,52 @@ void SX1272::OFF()
 	  Serial.println();
   #endif
 }
+
+/*
+ Function: Resets the module.
+ Returns: Nothing
+*/
+void SX1272::reset()
+{
+  #if (SX1272_debug_mode > 1)
+	  Serial.println();
+	  Serial.println(F("## Starting 'OFF' ##"));
+  #endif
+
+  // Powerdown sequence:
+#if defined ( ARDUINO_Heltec_WIFI_LoRa_32 )
+
+// Well can't power down do a reset instead
+  // 1.- Close SPI
+  SPI.end();
+// 2.- reset pulse for LoRa module initialization AGGE
+  digitalWrite(LORA_SS_PIN, LOW);
+  digitalWrite(LORA_SS_PIN, LOW);
+  digitalWrite(LORA_RESET_PIN, LOW);
+  digitalWrite(LORA_RESET_PIN, LOW);
+
+  delay(1); /// >100us according to 7.2.2. Manual Reset
+
+  digitalWrite(LORA_SS_PIN, HIGH);
+  digitalWrite(LORA_RESET_PIN, HIGH);
+
+  delay(11); /// >100ms according to 7.2.1. Manual Reset
+
+    #if (SX1272_debug_mode > 1)
+	  Serial.println(F("## Reset ARDUINO_Heltec_WIFI_LoRa_32 def ##"));
+	  Serial.println();
+    #endif
+
+#endif // defined
+
+
+  // Powerdown the module
+  #if (SX1272_debug_mode > 1)
+	  Serial.println(F("## Setting OFF ##"));
+	  Serial.println();
+  #endif
+}
+
 
 /*
  Function: Reads the indicated register.

@@ -282,33 +282,21 @@ const uint8_t INCORRECT_PACKET = 1;
 struct pack
 {
 	//! Structure Variable : Packet destination
-	/*!
- 	*/
 	uint8_t dst;
 
 	//! Structure Variable : Packet source
-	/*!
- 	*/
 	uint8_t src;
 
 	//! Structure Variable : Packet number
-	/*!
- 	*/
 	uint8_t packnum;
 
 	//! Structure Variable : Packet length
-	/*!
- 	*/
 	uint8_t length;
 
 	//! Structure Variable : Packet payload
-	/*!
- 	*/
 	uint8_t data[MAX_PAYLOAD];
 
 	//! Structure Variable : Retry number
-	/*!
- 	*/
 	uint8_t retry;
 };
 
@@ -341,12 +329,23 @@ public:
 	 */
 	uint8_t ON();
 
+    //! Init the module
+  	/*!
+	\param void
+	\return uint8_t setLORA state
+	*/
+	uint8_t init();
+
 	//! It puts the module OFF
   	/*!
 	\param void
 	\return void
 	 */
 	void OFF();
+
+    //! Reset the module
+	void reset();
+
 
 	//! It reads an internal module register.
   	/*!
