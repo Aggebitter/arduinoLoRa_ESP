@@ -22,12 +22,12 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/. 
  *  
  *  Version:           1.2
- *  Design:            David Gascón
- *  Implementation:    Covadonga Albiñana, Victor Boria, Ruben Martin
+ *  Design:            David GascÃ³n
+ *  Implementation:    Covadonga AlbiÃ±ana, Victor Boria, Ruben Martin
  *  
  *  Libelium ends here
  *  
- *  Version 1.3
+ *  Version 1.3a
  *  Implementation: Agge Bitter
  *  
  *  Port to ESP-32/8266 and newer Arduino IDE, tested on 1.8.5
@@ -101,47 +101,45 @@ void setup()
   
   // Power ON the module
   e = sx1272.ON();
-  Serial.print(F("Setting power ON: state "));
-  Serial.println(e, DEC);
-  
-  // Check register OP Mode
-  e |= sx1272.readRegister(0x01);
-  Serial.print(F("Reading OP Mode: state "));
-  Serial.println(e, BIN);
+  Serial.print(F("Setting power ON: "));
+  if (e > 0) Serial.println(e, DEC);
+  else Serial.println("OK");
   
   // Set transmission mode and print the result
   e |= sx1272.setMode(4);
-  Serial.print(F("Setting Mode: state "));
-  Serial.println(e, BIN);
+  Serial.print(F("Setting Mode: "));
+  if (e > 0) Serial.println(e, DEC);
+  else Serial.println("OK");
 
-  // Check register OP Mode
-    e |= sx1272.readRegister(0x01);
-  Serial.print(F("Reading OP Mode: state "));
-  Serial.println(e, BIN);
   // Set header
   e |= sx1272.setHeaderON();
-  Serial.print(F("Setting Header ON: state "));
-  Serial.println(e, DEC);
+  Serial.print(F("Setting Header ON: "));
+  if (e > 0) Serial.println(e, DEC);
+  else Serial.println("OK");
   
   // Select frequency channel
   e |= sx1272.setChannel(CH_00_433);
-  Serial.print(F("Setting Channel: state "));
-  Serial.println(e, DEC);
+  Serial.print(F("Setting Channel: "));
+  if (e > 0) Serial.println(e, DEC);
+  else Serial.println("OK");
   
   // Set CRC
   e |= sx1272.setCRC_ON();
-  Serial.print(F("Setting CRC ON: state "));
-  Serial.println(e, DEC);
+  Serial.print(F("Setting CRC ON: "));
+  if (e > 0) Serial.println(e, DEC);
+  else Serial.println("OK");
   
   // Select output power (Max, High or Low)
-  e |= sx1272.setPower('L');
-  Serial.print(F("Setting Power: state "));
-  Serial.println(e, DEC);
+  e |= sx1272.setPower('M');
+  Serial.print(F("Setting Power: "));
+  if (e > 0) Serial.println(e, DEC);
+  else Serial.println("OK");
   
   // Set the node address and print the result
   e |= sx1272.setNodeAddress(3);
-  Serial.print(F("Setting node address: state "));
-  Serial.println(e, DEC);
+  Serial.print(F("Setting node address: "));
+  if (e > 0) Serial.println(e, DEC);
+  else Serial.println("OK");
   
   // Print a success message
   if (e == 0)
