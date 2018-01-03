@@ -10,8 +10,12 @@ http://www.libelium.com
 | --- | --- |
 |**ON();**  |resets and sets the SX127x basic LoRa mode |
 | `returns` | uint8_t |
+|**init();**  |init and check SX127x basic LoRa mode, ***USE with ESP32/ESP8266 or without libelium shield added 2018-01-03 by Agge*** |
+| `returns` | uint8_t ***ToDo return hardware id***  |
 |**OFF();**  |just reset SX127x LoRa module (for compability) |
-| `returns` | uint8_t |
+| `returns` | void |
+|**reset();**  |reset SX127x LoRa module (for compability) ***2018-01-03 by Agge*** |
+| `returns` | void ***ToDo return hardware id when some defaults are checked***|
 |**readRegister();**  |Reads the indicated internal register |
 | `returns` | uint8_t |
 |**writeRegister()**  |Writes the indicated internal register |
