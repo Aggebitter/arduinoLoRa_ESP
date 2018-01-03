@@ -44,7 +44,7 @@ http://www.libelium.com
 | `returns` | uint8_t |
 |**setBW(uint16_t);**  |Sets the indicated BandWidth in the module |
 | `returns` | uint8_t |
-|**setPower()**  |Sets the signal power indicated in the module |
+|**setPower(char)**  |Sets the signal power (M)ax , (H)igh , (L)ow ***fix 2018-01-03 by Agge***|
 | `returns` | uint8_t |
 |**setPowerNum();**  |Sets the signal power indicated in the module |
 | `returns` | uint8_t |
