@@ -40,9 +40,9 @@ http://www.libelium.com
 | `returns` | uint8_t |
 |**serCR();**  |Sets the indicated Coding Rate in the module |
 | `returns` | uint8_t |
-|**setSF();**  |Sets the indicated Spreading Factor in the module |
+|**setSF(uint8_t);**  |Sets the indicated Spreading Factor in the module |
 | `returns` | uint8_t |
-|**setBW();**  |Sets the indicated BamdWidth in the module |
+|**setBW(uint16_t);**  |Sets the indicated BandWidth in the module |
 | `returns` | uint8_t |
 |**setPower()**  |Sets the signal power indicated in the module |
 | `returns` | uint8_t |
