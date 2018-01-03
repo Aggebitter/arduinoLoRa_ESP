@@ -1681,6 +1681,155 @@ int8_t	SX1272::getBW()
 }
 
 /*
+ Function: Sets the indicated BW in the module. bit 7-4
+ Returns: Integer that determines if there has been any error
+   state = 2  --> The command has not been executed
+   state = 1  --> There has been an error while executing the command
+   state = 0  --> The command has been executed with no errors
+ Parameters:
+   band: bandwith value to set in LoRa modem configuration.
+*/
+int8_t	SX1272::setLoRaBW(uint8_t mode) //! To Do Agge
+{
+  byte st0;
+  int8_t state = 2;
+  byte config1;
+  byte config2;
+  #if (SX1272_debug_mode > 1)
+	  Serial.println();
+	  Serial.println(F("## Starting 'setLoRaBW' ##"));
+  #endif
+
+  st0 = readRegister(REG_OP_MODE);	// Save the previous status
+
+  if( _modem == FSK )
+  {
+	  #if (SX1272_debug_mode > 1)
+		  Serial.print(F("## Notice that FSK hasn't Bandwidth parameter, "));
+		  Serial.println(F("so you are configuring it in LoRa mode ##"));
+	  #endif
+	  state = setLORA();
+  }
+  writeRegister(REG_OP_MODE, LORA_STANDBY_MODE);	// LoRa standby mode
+  config1 = (readRegister(REG_MODEM_CONFIG1));	// Save config1 to modify only the BW
+  switch(mode)
+  {
+      case 0:  config1 = config1 & B00001111;	// clears bits 7 - 4 from REG_MODEM_CONFIG1
+					break;
+
+      case 1:  config1 = config1 & B00001111;	// clears bits 7 - 4 from REG_MODEM_CONFIG1
+					config1 = config1 | B00010000;	// sets bit 4 from REG_MODEM_CONFIG1
+					break;
+
+      case 2:  config1 = config1 & B00001111;	// clears bits 7 - 4 from REG_MODEM_CONFIG1
+					config1 = config1 | B00100000;	// sets bit 5 from REG_MODEM_CONFIG1
+					break;
+
+      case 3:  config1 = config1 & B00001111;	// clears bits 7 - 4 from REG_MODEM_CONFIG1
+ 					config1 = config1 | B00110000;	// sets bit 4,5 from REG_MODEM_CONFIG1
+					break;
+
+      case 4:  config1 = config1 & B00001111;	// clears bits 7 - 4 from REG_MODEM_CONFIG1
+ 					config1 = config1 | B01000000;	// sets bit 6  from REG_MODEM_CONFIG1
+					break;
+
+      case 5:  config1 = config1 & B00001111;	// clears bits 7 - 4 from REG_MODEM_CONFIG1
+					config1 = config1 | B01010000;	// sets bit 6,4 from REG_MODEM_CONFIG1
+					break;
+
+      case 6:  config1 = config1 & B00001111;	// clears bits 7 - 4 from REG_MODEM_CONFIG1
+					config1 = config1 | B01100000;	// sets bit 6,5 from REG_MODEM_CONFIG1
+					break;
+
+	  case 7:  config1 = config1 & B00111111;	// clears bits 7 - 4 from REG_MODEM_CONFIG1
+					getSF();
+					if( _spreadingFactor == 11 )
+					{ //! LowDataRateOptimize (Mandatory with BW_125 if SF_11) Modem config 3
+					    config2 = (readRegister(REG_MODEM_CONFIG3));	// Save config2 to modify LowDataRateOptimize
+						config2 = config2 & B00000100;              // bit 3 "1" = enable, "0" = disable
+						config2 = config2 | B00000100;              // set bit 3 "1" = enable
+						writeRegister(REG_MODEM_CONFIG3,config2);	// Update config3
+						//! TODO AGGEIn the lower band (169MHz), signal bandwidths 8&9 are not  allowed
+					}
+					if( _spreadingFactor == 12 )
+					{ //! LowDataRateOptimize (Mandatory with BW_125 if SF_12) Modem config 3
+					    config2 = (readRegister(REG_MODEM_CONFIG3));	// Save config2 to modify LowDataRateOptimize
+						config2 = config2 & B00000100;              // bit 3 "1" = enable, "0" = disable
+						config2 = config2 | B00000100;              // set bit 3 "1" = enable
+						writeRegister(REG_MODEM_CONFIG3,config2);   // Update config3
+						//! TODO AGGEIn the lower band (169MHz), signal bandwidths 8&9 are not  allowed
+					}
+					break;
+	  case 8:  config1 = config1 & B00001111;	// clears bits 7 - 4 from REG_MODEM_CONFIG1
+					config1 = config1 | B10000000;	// sets bit 7 from REG_MODEM_CONFIG1
+					break;
+	  case 9:  config1 = config1 & B00001111;	// clears bits 7 - 4 from REG_MODEM_CONFIG1
+					config1 = config1 | B10010000;	//sets bit 7,4  from REG_MODEM_CONFIG1
+					break;
+  }
+  writeRegister(REG_MODEM_CONFIG1,config1);		// Update config1
+
+  delay(100);
+
+  config1 = (readRegister(REG_MODEM_CONFIG1));
+  // (config1 >> 6) ---> take out bits 7-6 from REG_MODEM_CONFIG1 (=_bandwidth)
+  switch(mode) //!mode
+  {
+	   case 7: if( (config1 >> 4) == 7 )
+					{
+						state = 0;
+						if( _spreadingFactor == 11 )
+						{
+							if( bitRead(config2, 0) == 1 ) state = 0; //! LowDataRateOptimize Modem config 3
+							else state = 1;
+						}
+						if( _spreadingFactor == 12 )
+						{
+							if( bitRead(config2, 0) == 1 ) state = 0; //! LowDataRateOptimize Modem config 3
+							else state = 1;
+						}
+					}
+					break;
+	   case 8: if( (config1 >> 4) == 8 )
+					{
+						state = 0;
+					}
+					break;
+	   case 9: if( (config1 >> 4) == 9 )
+					{
+						state = 0;
+					}
+					break;
+  }
+
+  if( (config1 >> 4) < 7 ) state = 0;
+
+  if( not isBW(mode) )
+  {
+	  state = 1;
+	  #if (SX1272_debug_mode > 1)
+		  Serial.print(F("** Bandwidth "));
+		  Serial.print(mode, HEX);
+		  Serial.println(F(" is not a correct value **"));
+		  Serial.println();
+	  #endif
+  }
+  else
+  {
+	  _bandwidth = mode; //! Check _bandwidth variable if matching new way to do this
+	  #if (SX1272_debug_mode > 1)
+		  Serial.print(F("## Bandwidth "));
+		  Serial.print(mode, HEX);
+		  Serial.println(F(" has been successfully set ##"));
+		  Serial.println();
+	  #endif
+  }
+  writeRegister(REG_OP_MODE, st0);	// Getting back to previous status
+  delay(100);
+  return state;
+}
+
+/*
  Function: Sets the indicated BW in the module.
  Returns: Integer that determines if there has been any error
    state = 2  --> The command has not been executed
@@ -2288,6 +2437,7 @@ uint8_t SX1272::getPower()
 
 /*
  Function: Sets the signal power indicated in the module.
+ MaxPower is set to 15 dBm 0xF0 without PA Boost enabled bit 6-4
  Returns: Integer that determines if there has been any error
    state = 2  --> The command has not been executed
    state = 1  --> There has been an error while executing the command
@@ -2323,13 +2473,13 @@ int8_t SX1272::setPower(char p)
     // H = high
     // M = max
 
-    case 'M':  _power = 0x0F;
+    case 'M':  _power = 0x7F; //! 0x70 + 0x0F, B01110000 + B00001111
                break;
 
-    case 'L':  _power = 0x00;
+    case 'L':  _power = 0x70; //! 0x70 + 0x00, B01110000 + B00000000
                break;
 
-    case 'H':  _power = 0x07;
+    case 'H':  _power = 0x77; //! 0x70 + 0x07, B01110000 + B00000111
                break;
 
     default:   state = -1;

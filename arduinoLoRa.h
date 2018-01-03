@@ -139,6 +139,7 @@
 #define        REG_PREAMBLE_MSB_FSK 			0x25
 #define        REG_FIFO_RX_BYTE_ADDR 			0x25
 #define        REG_PREAMBLE_LSB_FSK 			0x26
+#define        REG_MODEM_CONFIG3     			0x26
 #define        REG_SYNC_CONFIG	  				0x27
 #define        REG_SYNC_VALUE1	 				0x28
 #define        REG_SYNC_VALUE2	  				0x29
@@ -398,6 +399,7 @@ public:
     * Returns: Nothing
     */
     void setDio2Map(uint8_t map_dio2);
+
     //! It it returns and clears the interruption flags.
   	/*!
 	\param void
@@ -521,8 +523,26 @@ public:
 	 */
 	int8_t	getBW();
 
+	/*
+    Function: Sets the indicated BW in the module. bit 7-4
+    Signal bandwidth:
+    Mode0 = 7.8 kHz, Mode1 = 10.4 kHz, Mode2 = 15.6 kHz, Mode3 = 20.8kHz
+    Mode4 = 31.25 kHz, Mode5 = 41.7 kHz, Mode6 = 62.5 kHz, Mode7 = 125 kHz
+    Mode8 = 250 kHz, Mode9 = 500 kHz, other values are reserved
+    In the lower band (169MHz), signal bandwidths 8&9 are not allowed
+    Returns: Integer that determines if there has been any error
+    state = 2  --> The command has not been executed
+    state = 1  --> There has been an error while executing the command
+    state = 0  --> The command has been executed with no errors
+    Parameters:
+   band: bandwith value to set in LoRa modem configuration.
+    */
+    int8_t	setLoRaBW(uint8_t mode); //Agge
+
 	//! It sets the BW.
   	/*!
+  	//! Something strange here Agge
+
 	It stores in global '_bandwidth' variable the BW selected
 	in the configuration
 	\param uint16_t band : bandwidth value to set in the configuration.
@@ -1133,6 +1153,9 @@ public:
 	uint8_t _spreadingFactor;
 
 	//! Variable : frequency channel.
+	//!    channel = 0x6C4B33  --> CH = 00_433, 433.175 MHz
+    //!    channel = 0x6C5800  --> CH = 01_433, 433.375 MHz
+    //!    channel = 0x6C64CC  --> CH = 02_433, 433.575 MHz
 	//!    channel = 0xD84CCC  --> CH = 10_868, 865.20MHz
 	//!    channel = 0xD86000  --> CH = 11_868, 865.50MHz
 	//!    channel = 0xD87333  --> CH = 12_868, 865.80MHz
