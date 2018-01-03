@@ -44,9 +44,9 @@ http://www.libelium.com
 | `returns` | uint8_t |
 |**setLoRaBW(int8_t);**  |Sets the BandWidth in LoRa mode. Use Mode(0) 7.8 kHz, Mode(1) 10.4 kHz, Mode(2) 15.6 kHz, Mode(3) 20.8kHz, Mode(4) 31.25 kHz, Mode(5) 41.7 kHz, Mode(6) 62.5 kHz, Mode(7) 125 kHz, Mode(8) 250 kHz, Mode(9) 500 kHz, other values are reserved ***added 2018-01-03 by Agge***|
 | `returns` | int8_t |
-|**setBW(uint16_t);**  |Sets the indicated BandWidth in the module |
+|**setBW(uint16_t);**  |Sets the indicated BandWidth in the module, ***For compability, use "setLoRaBW(int8_t)" instead Agge*** |
 | `returns` | uint8_t |
-|**setPower(char)**  |Sets the signal power (H)igh, (M)edium and (L)ow without PA boost ***fix 2018-01-03 by Agge***|
+|**setPower(char)**  |Sets the signal power (H)igh, (M)edium and (L)ow without PA boost setCRC_ON ***added 2018-01-03 by Agge***|
 | `returns` | uint8_t |
 |**setPowerNum();**  |Sets the signal power indicated in the module |
 | `returns` | uint8_t |
