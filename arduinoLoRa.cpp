@@ -1,4 +1,10 @@
 /*
+*  LoRa 433 / 868 / 915MHz SX1272/76/78/79 LoRa module
+ *
+ *  Based on driver from libelium ported to ESP32
+ *
+ *  Libelium part starts here:
+ *
  *  Library for LoRa 868 / 915MHz SX1272 LoRa module
  *
  *  Copyright (C) Libelium Comunicaciones Distribuidas S.L.
@@ -20,7 +26,15 @@
  *  Version:           1.4
  *  Design:            David Gascón
  *  Implementation:    Covadonga Albiñana, Victor Boria, Ruben Martin
+ *
+ *  Libelium ends here
+ *
+ *  Version 1.5
+ *  Implementation: Agge Bitter
+ *
+ *  Port to ESP-32/8266 and newer Arduino IDE, tested on 1.8.5
  */
+
 #define ARDUINO_Heltec_WIFI_LoRa_32
 //**********************************************************************
 // Includes
@@ -380,6 +394,115 @@ void SX1272::clearFlags()
 	}
 }
 
+
+/*
+ Function: Set detect optimize
+    0x03 for SF7 to SF12
+    0x05 for SF6
+ Should be used in SF6 only
+ Returns: Nothing
+*/
+void SX1272::setDetectOptimize(bool ena)  // Agge
+{
+	if( _modem == LORA ) {
+
+
+        if (ena != 0 ){
+
+            writeRegister(REG_DETECT_OPTIMIZE,0x05 );	// SF6 mode
+
+            #if (SX1272_debug_mode > 1)
+                Serial.println(F("## DetectOptimize for SF6 was set ##"));
+            #endif
+        }
+        else {
+
+            writeRegister(REG_DETECT_OPTIMIZE,0x03 );	// SF7- SF12 mode
+
+            #if (SX1272_debug_mode > 1)
+                Serial.println(F("## DetectOptimize for SF6 was unset ##"));
+            #endif
+        }
+	}
+    else {
+
+        #if (SX1272_debug_mode > 1)
+            Serial.println(F("## DetectOptimize not ued in FSK ##"));
+        #endif
+    }
+}
+/*
+ Function: Set the mapping for Pin DIO 0
+                       Continius                 PacketMode
+                        RX | TX                   RX | TX
+ Mode0         SyncAddress | TxReady    PayloadReady | PacketSent
+ Mode1 Rssi/PreambleDetect | -                 CrcOk | -
+ Mode2             RxReady | TxReady               - | -
+ Mode3                   - | -             TempChange / LowBat
+ Returns: Nothing
+*/
+void SX1272::setDio0Map(uint8_t map_dio0)  // Agge
+{
+    byte st0;
+
+    if (map_dio0 < 4){
+        st0 = readRegister(REG_DIO_MAPPING1);		// Save the previous status
+        // Clear bit 6-7
+        st0 = st0 << 2 ; // shift out bit 6-7
+        st0 = st0 >> 2 ; // shift bit 0-5 back and blank 6-7
+        // Move input bit 0-1 to 6-7
+        map_dio0 = map_dio0 << 6 ;
+        // bitwise^ OR | bit 6-7
+        st0 = st0 ^ map_dio0;
+        writeRegister(REG_DIO_MAPPING1,st0 );	// Stdby mode to write in registers
+
+		#if (SX1272_debug_mode > 1)
+			Serial.println(F("## DIO 0 bit(6-7) mapping set to :##"));
+			Serial.println( st0 , BIN );
+		#endif
+	}
+	else {
+        #if (SX1272_debug_mode > 1)
+            Serial.println(F("## ! for DIO 0 mapping use number 0-3 only ! ##"));
+        #endif
+	}
+}
+
+	/*
+ Function: Set the mapping for Pin DIO 2
+                       Continius                 PacketMode
+                        RX | TX                   RX | TX
+ Mode0                   DATA                     FifoFull
+ Mode1                   DATA                RxReady | -
+ Mode2                   DATA                TimeOut | FifoFull
+ Mode3                   DATA            SyncAddress | FifoFull
+ Returns: Nothing
+*/
+void SX1272::setDio2Map(uint8_t map_dio2)  // Agge
+{
+    byte st0;
+
+    if (map_dio2 < 4){
+        	st0 = readRegister(REG_DIO_MAPPING1);		// Save the previous status
+            // Clear bit 6-7
+            st0 = st0 >> 2 ; // shift out bit 0-1
+            st0 = st0 << 2 ; // shift bit 2-7 back and blank 0-1
+            // bitwise^ OR | bit 6-7
+            st0 = st0 ^ map_dio2;
+            writeRegister(REG_DIO_MAPPING1,st0 );	// Stdby mode to write in registers
+
+            #if (SX1272_debug_mode > 1)
+                Serial.println(F("## DIO 2 bit(0-1) mapping set to :##"));
+                Serial.println( st0 , BIN );
+            #endif
+    }
+    else {
+            #if (SX1272_debug_mode > 1)
+                Serial.println(F("## ! for DIO 2 mapping use number 0-3 only ! ##"));
+            #endif
+    }
+
+	}
 /*
  Function: Gets the interrupt register and clear it, Use when external IRQ is trigged
  Returns: uint16_t
@@ -1566,7 +1689,7 @@ int8_t	SX1272::getBW()
  Parameters:
    band: bandwith value to set in LoRa modem configuration.
 */
-int8_t	SX1272::setBW(uint16_t band)
+int8_t	SX1272::setBW(uint16_t band) //! To Do Agge
 {
   byte st0;
   int8_t state = 2;

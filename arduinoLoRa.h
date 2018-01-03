@@ -1,4 +1,10 @@
 /*
+  *  LoRa 433 / 868 / 915MHz SX1272/76/78/79 LoRa module
+ *
+ *  Based on driver from libelium ported to ESP32
+ *
+ *  Libelium part starts here:
+ *
  *  Library for LoRa 868 / 915MHz SX1272 LoRa module
  *
  *  Copyright (C) Libelium Comunicaciones Distribuidas S.L.
@@ -20,6 +26,13 @@
  *  Version:           1.4
  *  Design:            David Gascón
  *  Implementation:    Covadonga Albiñana, Victor Boria, Ruben Martin
+ *
+ *  Libelium ends here
+ *
+ *  Version 1.5
+ *  Implementation: Agge Bitter
+ *
+ *  Port to ESP-32/8266 and newer Arduino IDE, tested on 1.8.5
  */
 
 
@@ -199,7 +212,7 @@ const uint32_t CH_11_900 = 0xE7B5C2; // channel 11, central freq = 926.84MHz
 const uint32_t CH_12_900 = 0xE4C000; // default channel 915MHz, the module is configured with it
 
 //LORA BANDWIDTH:
-const uint8_t BW_125 = 0x00;
+const uint8_t BW_125 = 0x00; //! To Do Agge
 const uint8_t BW_250 = 0x01;
 const uint8_t BW_500 = 0x02;
 const double SignalBwLog[] =
@@ -355,6 +368,36 @@ public:
 	 */
 	void clearFlags();
 
+    //!* Set detect optimize
+    /*!
+    * 0x03 for SF7 to SF12
+    * 0x05 for SF6
+    * Should be used in SF6 only
+    * Returns: Nothing
+    */
+    void setDetectOptimize(bool ena);
+
+	//! Set the mapping for Pin DIO 0 use 0,1,2 or 3
+    /*!                     Continuous                 PacketMode
+    *                         RX | TX                   RX | TX
+    *  Mode0         SyncAddress | TxReady    PayloadReady | PacketSent
+    *  Mode1 Rssi/PreambleDetect | -                 CrcOk | -
+    *  Mode2             RxReady | TxReady               - | -
+    *  Mode3                   - | -             TempChange / LowBat
+    * Returns: Nothing
+    */
+    void setDio0Map(uint8_t map_dio0);
+
+    //!Set the mapping for Pin DIO 0 use 0,1,2 or 3
+    /*!         Continius                 PacketMode
+    *            RX | TX                   RX | TX
+    *  Mode0      DATA                     FifoFull
+    *  Mode1      DATA                RxReady | -
+    *  Mode2      DATA                TimeOut | FifoFull
+    *  Mode3      DATA            SyncAddress | FifoFull
+    * Returns: Nothing
+    */
+    void setDio2Map(uint8_t map_dio2);
     //! It it returns and clears the interruption flags.
   	/*!
 	\param void
